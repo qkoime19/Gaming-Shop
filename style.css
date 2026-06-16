@@ -154,6 +154,38 @@ h2 {
   background: var(--surface-soft);
 }
 
+.rarity {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.rarity-legendary {
+  background: #ffcf4d;
+  color: #241600;
+}
+
+.rarity-epic {
+  background: #9b5cff;
+  color: #ffffff;
+}
+
+.rarity-rare {
+  background: #2ed3ff;
+  color: #061923;
+}
+
+.rarity-common {
+  background: #d4dae5;
+  color: #1c2430;
+}
+
 .product-card p {
   margin-bottom: 0;
   color: var(--muted);
@@ -205,6 +237,10 @@ h2 {
 }
 
 .inventory-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   color: var(--text);
 }
 
