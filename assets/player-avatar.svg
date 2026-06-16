@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title">
+  <title id="title">Player Avatar</title>
+  <rect width="120" height="120" rx="24" fill="#252a35"/>
+  <circle cx="60" cy="44" r="24" fill="#28d8a1"/>
+  <path d="M24 104 C30 78 43 68 60 68 C77 68 90 78 96 104 Z" fill="#f4f7fb"/>
+  <path d="M38 42 H82" stroke="#13151b" stroke-width="10" stroke-linecap="round"/>
+  <path d="M44 32 L60 22 L76 32" fill="none" stroke="#ffcf4d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

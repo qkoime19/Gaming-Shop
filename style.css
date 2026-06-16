@@ -47,6 +47,21 @@ select {
   margin-bottom: 24px;
 }
 
+.player-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.player-avatar {
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  object-fit: cover;
+}
+
 .eyebrow {
   margin: 0 0 4px;
   color: var(--accent);
@@ -63,7 +78,7 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-size: 3rem;
 }
 
 h2 {
@@ -132,6 +147,43 @@ h2 {
   text-align: right;
 }
 
+.shop-controls {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 170px 180px;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.shop-controls input,
+.shop-controls select {
+  min-height: 42px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 12px;
+}
+
+.shop-controls input:focus,
+.shop-controls select:focus,
+.buy-button:focus,
+.loot-button:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .inventory-panel {
   width: 300px;
   padding: 18px;
@@ -172,12 +224,24 @@ h2 {
   font-size: 1.05rem;
 }
 
+.product-image-wrap {
+  position: relative;
+}
+
 .product-art {
   width: 100%;
   aspect-ratio: 16 / 10;
   border-radius: 6px;
   object-fit: cover;
   background: var(--surface-soft);
+}
+
+.product-badges,
+.price-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .rarity {
@@ -212,6 +276,37 @@ h2 {
   color: #1c2430;
 }
 
+.category-badge,
+.limited-badge,
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.category-badge {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.limited-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ffcf4d;
+  color: #241600;
+}
+
+.discount-badge {
+  background: #dc2626;
+  color: #ffffff;
+}
+
 .product-card p {
   margin-bottom: 0;
   color: var(--muted);
@@ -229,6 +324,22 @@ h2 {
   color: var(--accent);
   font-size: 1.2rem;
   font-weight: 800;
+}
+
+.old-price {
+  color: var(--muted);
+  font-weight: 700;
+  text-decoration: line-through;
+}
+
+.empty-result {
+  grid-column: 1 / -1;
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
 }
 
 .buy-button {
@@ -265,9 +376,17 @@ h2 {
 .inventory-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   color: var(--text);
+}
+
+.inventory-name {
+  flex: 1;
+}
+
+.inventory-quantity {
+  color: var(--accent);
+  font-weight: 800;
 }
 
 @media (max-width: 780px) {
@@ -285,8 +404,27 @@ h2 {
     flex-direction: column;
   }
 
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  .shop-controls {
+    grid-template-columns: 1fr;
+  }
+
   .shop-message {
     text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .player-block {
+    align-items: flex-start;
+  }
+
+  .player-avatar {
+    width: 56px;
+    height: 56px;
   }
 }
 

@@ -8,7 +8,14 @@ Mini project for a game item shop built with HTML, CSS, and JavaScript.
 - Dynamic product cards
 - Coin balance
 - Inventory list
-- Loot box and extra shop features
+- Product images
+- Rarity system
+- Loot box
+- Card animations
+- Player avatar
+- Search, category filtering, and sorting
+- Limited items and discounts
+- Stackable inventory quantities
 
 ## Files
 

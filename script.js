@@ -5,7 +5,10 @@ const products = [
     price: 350,
     description: "Fast melee skin for stealth players.",
     image: "assets/shadow-blade.svg",
-    rarity: "Epic"
+    rarity: "Epic",
+    category: "Weapons",
+    discount: 10,
+    limited: false
   },
   {
     id: 2,
@@ -13,7 +16,10 @@ const products = [
     price: 520,
     description: "Bright rifle skin with clean futuristic lines.",
     image: "assets/neon-rifle.svg",
-    rarity: "Legendary"
+    rarity: "Legendary",
+    category: "Weapons",
+    discount: 25,
+    limited: true
   },
   {
     id: 3,
@@ -21,7 +27,10 @@ const products = [
     price: 280,
     description: "Defensive item with icy blue details.",
     image: "assets/frost-shield.svg",
-    rarity: "Rare"
+    rarity: "Rare",
+    category: "Armor",
+    discount: 0,
+    limited: false
   },
   {
     id: 4,
@@ -29,9 +38,41 @@ const products = [
     price: 420,
     description: "Avatar helmet for ranked matches.",
     image: "assets/cyber-helmet.svg",
-    rarity: "Common"
+    rarity: "Common",
+    category: "Armor",
+    discount: 0,
+    limited: false
+  },
+  {
+    id: 5,
+    name: "Dragon Gloves",
+    price: 260,
+    description: "Fire gloves that boost the player style score.",
+    image: "assets/dragon-gloves.svg",
+    rarity: "Rare",
+    category: "Cosmetics",
+    discount: 50,
+    limited: true
+  },
+  {
+    id: 6,
+    name: "Ember Cape",
+    price: 180,
+    description: "Animated cape with warm ember colors.",
+    image: "assets/ember-cape.svg",
+    rarity: "Common",
+    category: "Cosmetics",
+    discount: 0,
+    limited: false
   }
 ];
+
+const rarityOrder = {
+  Legendary: 4,
+  Epic: 3,
+  Rare: 2,
+  Common: 1
+};
 
 let coins = 1200;
 const inventory = [];
@@ -41,28 +82,121 @@ const inventoryList = document.querySelector("#inventoryList");
 const coinCount = document.querySelector("#coinCount");
 const shopMessage = document.querySelector("#shopMessage");
 const lootBoxButton = document.querySelector("#lootBoxButton");
+const searchInput = document.querySelector("#searchInput");
+const categoryFilter = document.querySelector("#categoryFilter");
+const sortSelect = document.querySelector("#sortSelect");
+
+function getFinalPrice(product) {
+  return Math.round(product.price * (1 - product.discount / 100));
+}
 
 function updateCoins() {
   coinCount.textContent = coins;
 }
 
+function populateCategories() {
+  const categories = [...new Set(products.map((product) => product.category))].sort();
+
+  categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+
+function getVisibleProducts() {
+  const searchValue = searchInput.value.trim().toLowerCase();
+  const selectedCategory = categoryFilter.value;
+  const selectedSort = sortSelect.value;
+
+  const visibleProducts = products.filter((product) => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchValue) ||
+      product.description.toLowerCase().includes(searchValue) ||
+      product.rarity.toLowerCase().includes(searchValue);
+    const matchesCategory =
+      selectedCategory === "all" || product.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  if (selectedSort === "price-low") {
+    visibleProducts.sort((first, second) => getFinalPrice(first) - getFinalPrice(second));
+  }
+
+  if (selectedSort === "price-high") {
+    visibleProducts.sort((first, second) => getFinalPrice(second) - getFinalPrice(first));
+  }
+
+  if (selectedSort === "rarity") {
+    visibleProducts.sort((first, second) => rarityOrder[second.rarity] - rarityOrder[first.rarity]);
+  }
+
+  return visibleProducts;
+}
+
+function createPriceMarkup(product) {
+  const finalPrice = getFinalPrice(product);
+
+  if (product.discount === 0) {
+    return `<span class="product-price">${finalPrice} coins</span>`;
+  }
+
+  return `
+    <span class="product-price">${finalPrice} coins</span>
+    <span class="old-price">${product.price}</span>
+    <span class="discount-badge">-${product.discount}%</span>
+  `;
+}
+
 function renderProducts() {
+  const visibleProducts = getVisibleProducts();
   productGrid.innerHTML = "";
 
-  products.forEach((product) => {
+  if (visibleProducts.length === 0) {
+    const emptyResult = document.createElement("p");
+    emptyResult.className = "empty-result";
+    emptyResult.textContent = "No matching items.";
+    productGrid.appendChild(emptyResult);
+    return;
+  }
+
+  visibleProducts.forEach((product) => {
     const card = document.createElement("article");
     card.className = "product-card";
     card.innerHTML = `
-      <img class="product-art" src="${product.image}" alt="${product.name}">
-      <span class="rarity rarity-${product.rarity.toLowerCase()}">${product.rarity}</span>
+      <div class="product-image-wrap">
+        <img class="product-art" src="${product.image}" alt="${product.name}">
+        ${product.limited ? '<span class="limited-badge">Limited</span>' : ""}
+      </div>
+      <div class="product-badges">
+        <span class="rarity rarity-${product.rarity.toLowerCase()}">${product.rarity}</span>
+        <span class="category-badge">${product.category}</span>
+      </div>
       <h3>${product.name}</h3>
       <p>${product.description}</p>
       <div class="product-meta">
-        <span class="product-price">${product.price} coins</span>
+        <div class="price-row">${createPriceMarkup(product)}</div>
       </div>
       <button class="buy-button" type="button" data-product-id="${product.id}">BUY</button>
     `;
     productGrid.appendChild(card);
+  });
+}
+
+function addToInventory(product) {
+  const existingSlot = inventory.find((slot) => slot.item.id === product.id);
+
+  if (existingSlot) {
+    existingSlot.quantity += 1;
+    return;
+  }
+
+  inventory.push({
+    item: product,
+    quantity: 1
   });
 }
 
@@ -77,12 +211,13 @@ function renderInventory() {
     return;
   }
 
-  inventory.forEach((item) => {
+  inventory.forEach((slot) => {
     const inventoryItem = document.createElement("li");
     inventoryItem.className = "inventory-item";
     inventoryItem.innerHTML = `
-      <span>${item.name}</span>
-      <span class="rarity rarity-${item.rarity.toLowerCase()}">${item.rarity}</span>
+      <span class="inventory-name">${slot.item.name}</span>
+      <span class="inventory-quantity">x${slot.quantity}</span>
+      <span class="rarity rarity-${slot.item.rarity.toLowerCase()}">${slot.item.rarity}</span>
     `;
     inventoryList.appendChild(inventoryItem);
   });
@@ -95,13 +230,15 @@ function buyProduct(productId) {
     return;
   }
 
-  if (coins < product.price) {
+  const price = getFinalPrice(product);
+
+  if (coins < price) {
     shopMessage.textContent = `Not enough coins for ${product.name}.`;
     return;
   }
 
-  coins -= product.price;
-  inventory.push(product);
+  coins -= price;
+  addToInventory(product);
   shopMessage.textContent = `${product.name} was added to your inventory.`;
 
   updateCoins();
@@ -112,8 +249,15 @@ function openLootBox() {
   const randomIndex = Math.floor(Math.random() * products.length);
   const randomItem = products[randomIndex];
 
-  inventory.push(randomItem);
+  addToInventory(randomItem);
   shopMessage.textContent = `Loot box unlocked ${randomItem.name}.`;
+  renderInventory();
+}
+
+function initShop() {
+  populateCategories();
+  updateCoins();
+  renderProducts();
   renderInventory();
 }
 
@@ -128,12 +272,8 @@ productGrid.addEventListener("click", (event) => {
 });
 
 lootBoxButton.addEventListener("click", openLootBox);
-}
-
-function initShop() {
-  updateCoins();
-  renderProducts();
-  renderInventory();
-}
+searchInput.addEventListener("input", renderProducts);
+categoryFilter.addEventListener("change", renderProducts);
+sortSelect.addEventListener("change", renderProducts);
 
 initShop();

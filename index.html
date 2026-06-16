@@ -9,9 +9,12 @@
 <body>
   <main class="app-shell">
     <header class="topbar">
-      <div>
-        <p class="eyebrow">Skin Store</p>
-        <h1>Gaming Shop</h1>
+      <div class="player-block">
+        <img class="player-avatar" src="assets/player-avatar.svg" alt="Player avatar">
+        <div>
+          <p class="eyebrow">Skin Store</p>
+          <h1>Gaming Shop</h1>
+        </div>
       </div>
       <section class="wallet" aria-label="Player wallet">
         <span>Coins</span>
@@ -26,7 +29,23 @@
             <h2 id="shopTitle">Shop</h2>
             <button id="lootBoxButton" class="loot-button" type="button">OPEN LOOT BOX</button>
           </div>
-          <p id="shopMessage" class="shop-message" aria-live="polite">Choose an item to add it to your inventory.</p>
+          <p id="shopMessage" class="shop-message" aria-live="polite">Ready for the next purchase.</p>
+        </div>
+
+        <div class="shop-controls" aria-label="Shop controls">
+          <label class="visually-hidden" for="searchInput">Search items</label>
+          <input id="searchInput" type="search" placeholder="Search items">
+
+          <label class="visually-hidden" for="categoryFilter">Category</label>
+          <select id="categoryFilter"></select>
+
+          <label class="visually-hidden" for="sortSelect">Sort</label>
+          <select id="sortSelect">
+            <option value="default">Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rarity">Rarity</option>
+          </select>
         </div>
         <div class="product-grid" id="productGrid"></div>
       </section>
