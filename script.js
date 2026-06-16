@@ -40,6 +40,7 @@ const productGrid = document.querySelector("#productGrid");
 const inventoryList = document.querySelector("#inventoryList");
 const coinCount = document.querySelector("#coinCount");
 const shopMessage = document.querySelector("#shopMessage");
+const lootBoxButton = document.querySelector("#lootBoxButton");
 
 function updateCoins() {
   coinCount.textContent = coins;
@@ -107,6 +108,15 @@ function buyProduct(productId) {
   renderInventory();
 }
 
+function openLootBox() {
+  const randomIndex = Math.floor(Math.random() * products.length);
+  const randomItem = products[randomIndex];
+
+  inventory.push(randomItem);
+  shopMessage.textContent = `Loot box unlocked ${randomItem.name}.`;
+  renderInventory();
+}
+
 productGrid.addEventListener("click", (event) => {
   const buyButton = event.target.closest(".buy-button");
 
@@ -116,6 +126,8 @@ productGrid.addEventListener("click", (event) => {
 
   buyProduct(Number(buyButton.dataset.productId));
 });
+
+lootBoxButton.addEventListener("click", openLootBox);
 }
 
 function initShop() {
