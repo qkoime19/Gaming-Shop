@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title">
+  <title id="title">Neon Rifle</title>
+  <defs>
+    <linearGradient id="rifleBg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#171b24"/>
+      <stop offset="1" stop-color="#5228d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="220" rx="22" fill="url(#rifleBg)"/>
+  <path d="M34 88 H222 L270 108 H288 V126 H222 L196 146 H70 L62 126 H34 Z" fill="#f4f7fb"/>
+  <path d="M74 126 H128 L116 170 H84 Z" fill="#202633"/>
+  <path d="M194 86 H236 L262 58 H286 L250 98" fill="#202633"/>
+  <rect x="54" y="98" width="138" height="10" rx="5" fill="#28d8a1"/>
+  <rect x="202" y="113" width="70" height="8" rx="4" fill="#ffcf4d"/>
+  <circle cx="168" cy="116" r="13" fill="#202633"/>
+  <circle cx="168" cy="116" r="6" fill="#28d8a1"/>
+</svg>

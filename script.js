@@ -3,25 +3,29 @@ const products = [
     id: 1,
     name: "Shadow Blade",
     price: 350,
-    description: "Fast melee skin for stealth players."
+    description: "Fast melee skin for stealth players.",
+    image: "assets/shadow-blade.svg"
   },
   {
     id: 2,
     name: "Neon Rifle",
     price: 520,
-    description: "Bright rifle skin with clean futuristic lines."
+    description: "Bright rifle skin with clean futuristic lines.",
+    image: "assets/neon-rifle.svg"
   },
   {
     id: 3,
     name: "Frost Shield",
     price: 280,
-    description: "Defensive item with icy blue details."
+    description: "Defensive item with icy blue details.",
+    image: "assets/frost-shield.svg"
   },
   {
     id: 4,
     name: "Cyber Helmet",
     price: 420,
-    description: "Avatar helmet for ranked matches."
+    description: "Avatar helmet for ranked matches.",
+    image: "assets/cyber-helmet.svg"
   }
 ];
 
@@ -44,6 +48,7 @@ function renderProducts() {
     const card = document.createElement("article");
     card.className = "product-card";
     card.innerHTML = `
+      <img class="product-art" src="${product.image}" alt="${product.name}">
       <h3>${product.name}</h3>
       <p>${product.description}</p>
       <div class="product-meta">

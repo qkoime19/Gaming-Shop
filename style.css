@@ -146,6 +146,14 @@ h2 {
   font-size: 1.05rem;
 }
 
+.product-art {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--surface-soft);
+}
+
 .product-card p {
   margin-bottom: 0;
   color: var(--muted);
