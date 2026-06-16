@@ -65,9 +65,20 @@
         <div class="product-grid" id="productGrid"></div>
       </section>
 
-      <aside class="inventory-panel" aria-labelledby="inventoryTitle">
-        <h2 id="inventoryTitle">Inventory</h2>
-        <ul id="inventoryList" class="inventory-list"></ul>
+      <aside class="side-panel" aria-label="Cart and inventory">
+        <section class="cart-panel" aria-labelledby="cartTitle">
+          <div class="panel-heading">
+            <h2 id="cartTitle">Cart</h2>
+            <strong id="cartTotal">0 coins</strong>
+          </div>
+          <ul id="cartList" class="cart-list"></ul>
+          <button id="checkoutButton" class="checkout-button" type="button">CHECKOUT</button>
+        </section>
+
+        <section class="inventory-panel" aria-labelledby="inventoryTitle">
+          <h2 id="inventoryTitle">Inventory</h2>
+          <ul id="inventoryList" class="inventory-list"></ul>
+        </section>
       </aside>
     </section>
   </main>

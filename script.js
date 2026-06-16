@@ -76,8 +76,12 @@ const rarityOrder = {
 
 let coins = 1200;
 const inventory = [];
+const cart = [];
 
 const productGrid = document.querySelector("#productGrid");
+const cartList = document.querySelector("#cartList");
+const cartTotal = document.querySelector("#cartTotal");
+const checkoutButton = document.querySelector("#checkoutButton");
 const inventoryList = document.querySelector("#inventoryList");
 const coinCount = document.querySelector("#coinCount");
 const shopMessage = document.querySelector("#shopMessage");
@@ -94,6 +98,10 @@ function getFinalPrice(product) {
 
 function getSellPrice(product) {
   return Math.max(1, Math.round(getFinalPrice(product) * 0.5));
+}
+
+function getCartTotal() {
+  return cart.reduce((total, slot) => total + getFinalPrice(slot.item) * slot.quantity, 0);
 }
 
 function updateCoins() {
@@ -193,23 +201,80 @@ function renderProducts() {
       <div class="product-meta">
         <div class="price-row">${createPriceMarkup(product)}</div>
       </div>
-      <button class="buy-button" type="button" data-product-id="${product.id}">BUY</button>
+      <button class="buy-button" type="button" data-product-id="${product.id}">ADD TO CART</button>
     `;
     productGrid.appendChild(card);
   });
 }
 
-function addToInventory(product) {
-  const existingSlot = inventory.find((slot) => slot.item.id === product.id);
+function addStackedItem(collection, product) {
+  const existingSlot = collection.find((slot) => slot.item.id === product.id);
 
   if (existingSlot) {
     existingSlot.quantity += 1;
     return;
   }
 
-  inventory.push({
+  collection.push({
     item: product,
     quantity: 1
+  });
+}
+
+function addToInventory(product) {
+  addStackedItem(inventory, product);
+}
+
+function addToCart(product) {
+  addStackedItem(cart, product);
+}
+
+function removeFromCollection(collection, productId) {
+  const slotIndex = collection.findIndex((slot) => slot.item.id === productId);
+
+  if (slotIndex === -1) {
+    return null;
+  }
+
+  const slot = collection[slotIndex];
+  const product = slot.item;
+
+  slot.quantity -= 1;
+
+  if (slot.quantity === 0) {
+    collection.splice(slotIndex, 1);
+  }
+
+  return product;
+}
+
+function renderCart() {
+  cartList.innerHTML = "";
+  cartTotal.textContent = `${getCartTotal()} coins`;
+  checkoutButton.disabled = cart.length === 0;
+
+  if (cart.length === 0) {
+    const emptyItem = document.createElement("li");
+    emptyItem.className = "cart-empty";
+    emptyItem.textContent = "Cart is empty.";
+    cartList.appendChild(emptyItem);
+    return;
+  }
+
+  cart.forEach((slot) => {
+    const cartItem = document.createElement("li");
+    cartItem.className = "cart-item";
+    cartItem.innerHTML = `
+      <div class="cart-main">
+        <span class="cart-name">${slot.item.name}</span>
+        <span class="cart-quantity">x${slot.quantity}</span>
+        <span class="cart-price">${getFinalPrice(slot.item) * slot.quantity} coins</span>
+      </div>
+      <button class="cart-button remove-button" type="button" data-product-id="${slot.item.id}">
+        REMOVE
+      </button>
+    `;
+    cartList.appendChild(cartItem);
   });
 }
 
@@ -237,9 +302,6 @@ function renderInventory() {
         <button class="inventory-button sell-button" type="button" data-action="sell" data-product-id="${slot.item.id}">
           SELL +${getSellPrice(slot.item)}
         </button>
-        <button class="inventory-button remove-button" type="button" data-action="remove" data-product-id="${slot.item.id}">
-          REMOVE
-        </button>
       </div>
     `;
     inventoryList.appendChild(inventoryItem);
@@ -247,45 +309,20 @@ function renderInventory() {
 }
 
 function takeFromInventory(productId) {
-  const slotIndex = inventory.findIndex((slot) => slot.item.id === productId);
-
-  if (slotIndex === -1) {
-    return null;
-  }
-
-  const slot = inventory[slotIndex];
-  const product = slot.item;
-
-  slot.quantity -= 1;
-
-  if (slot.quantity === 0) {
-    inventory.splice(slotIndex, 1);
-  }
-
-  return product;
+  return removeFromCollection(inventory, productId);
 }
 
-function buyProduct(productId) {
+function addProductToCart(productId) {
   const product = products.find((item) => item.id === productId);
 
   if (!product) {
     return;
   }
 
-  const price = getFinalPrice(product);
+  addToCart(product);
+  shopMessage.textContent = `${product.name} was added to your cart.`;
 
-  if (coins < price) {
-    shopMessage.textContent = `Not enough coins for ${product.name}.`;
-    return;
-  }
-
-  coins -= price;
-  addToInventory(product);
-  shopMessage.textContent = `${product.name} was added to your inventory.`;
-
-  updateCoins();
-  updateStats();
-  renderInventory();
+  renderCart();
 }
 
 function openLootBox() {
@@ -314,16 +351,45 @@ function sellInventoryItem(productId) {
   renderInventory();
 }
 
-function removeInventoryItem(productId) {
-  const product = takeFromInventory(productId);
+function removeCartItem(productId) {
+  const product = removeFromCollection(cart, productId);
 
   if (!product) {
     return;
   }
 
-  shopMessage.textContent = `${product.name} was removed from inventory.`;
+  shopMessage.textContent = `${product.name} was removed from your cart.`;
 
+  renderCart();
+}
+
+function checkoutCart() {
+  const total = getCartTotal();
+
+  if (cart.length === 0) {
+    shopMessage.textContent = "Your cart is empty.";
+    return;
+  }
+
+  if (coins < total) {
+    shopMessage.textContent = `Not enough coins. Cart total is ${total} coins.`;
+    return;
+  }
+
+  coins -= total;
+
+  cart.forEach((slot) => {
+    for (let count = 0; count < slot.quantity; count += 1) {
+      addToInventory(slot.item);
+    }
+  });
+
+  cart.length = 0;
+  shopMessage.textContent = `Checkout complete for ${total} coins.`;
+
+  updateCoins();
   updateStats();
+  renderCart();
   renderInventory();
 }
 
@@ -331,6 +397,7 @@ function initShop() {
   populateCategories();
   updateCoins();
   updateStats();
+  renderCart();
   renderProducts();
   renderInventory();
 }
@@ -342,7 +409,17 @@ productGrid.addEventListener("click", (event) => {
     return;
   }
 
-  buyProduct(Number(buyButton.dataset.productId));
+  addProductToCart(Number(buyButton.dataset.productId));
+});
+
+cartList.addEventListener("click", (event) => {
+  const removeButton = event.target.closest(".cart-button");
+
+  if (!removeButton) {
+    return;
+  }
+
+  removeCartItem(Number(removeButton.dataset.productId));
 });
 
 inventoryList.addEventListener("click", (event) => {
@@ -358,11 +435,9 @@ inventoryList.addEventListener("click", (event) => {
     sellInventoryItem(productId);
   }
 
-  if (actionButton.dataset.action === "remove") {
-    removeInventoryItem(productId);
-  }
 });
 
+checkoutButton.addEventListener("click", checkoutCart);
 lootBoxButton.addEventListener("click", openLootBox);
 searchInput.addEventListener("input", renderProducts);
 categoryFilter.addEventListener("change", renderProducts);
