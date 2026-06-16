@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaming Shop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Skin Store</p>
+        <h1>Gaming Shop</h1>
+      </div>
+      <section class="wallet" aria-label="Player wallet">
+        <span>Coins</span>
+        <strong id="coinCount">1200</strong>
+      </section>
+    </header>
+
+    <section class="shop-layout">
+      <section class="shop-panel" aria-labelledby="shopTitle">
+        <div class="section-heading">
+          <h2 id="shopTitle">Shop</h2>
+        </div>
+        <div class="product-grid" id="productGrid"></div>
+      </section>
+
+      <aside class="inventory-panel" aria-labelledby="inventoryTitle">
+        <h2 id="inventoryTitle">Inventory</h2>
+        <ul id="inventoryList" class="inventory-list"></ul>
+      </aside>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
