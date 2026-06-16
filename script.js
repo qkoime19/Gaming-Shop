@@ -85,6 +85,8 @@ const lootBoxButton = document.querySelector("#lootBoxButton");
 const searchInput = document.querySelector("#searchInput");
 const categoryFilter = document.querySelector("#categoryFilter");
 const sortSelect = document.querySelector("#sortSelect");
+const productTotal = document.querySelector("#productTotal");
+const inventoryCount = document.querySelector("#inventoryCount");
 
 function getFinalPrice(product) {
   return Math.round(product.price * (1 - product.discount / 100));
@@ -92,6 +94,13 @@ function getFinalPrice(product) {
 
 function updateCoins() {
   coinCount.textContent = coins;
+}
+
+function updateStats() {
+  const totalItems = inventory.reduce((total, slot) => total + slot.quantity, 0);
+
+  productTotal.textContent = products.length;
+  inventoryCount.textContent = totalItems;
 }
 
 function populateCategories() {
@@ -165,7 +174,7 @@ function renderProducts() {
 
   visibleProducts.forEach((product) => {
     const card = document.createElement("article");
-    card.className = "product-card";
+    card.className = `product-card product-card-${product.rarity.toLowerCase()}`;
     card.innerHTML = `
       <div class="product-image-wrap">
         <img class="product-art" src="${product.image}" alt="${product.name}">
@@ -242,6 +251,7 @@ function buyProduct(productId) {
   shopMessage.textContent = `${product.name} was added to your inventory.`;
 
   updateCoins();
+  updateStats();
   renderInventory();
 }
 
@@ -251,12 +261,14 @@ function openLootBox() {
 
   addToInventory(randomItem);
   shopMessage.textContent = `Loot box unlocked ${randomItem.name}.`;
+  updateStats();
   renderInventory();
 }
 
 function initShop() {
   populateCategories();
   updateCoins();
+  updateStats();
   renderProducts();
   renderInventory();
 }
